@@ -1,0 +1,122 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+	// Basics  //
+		"adminUsername": {
+			"value": "adm-Alegri"
+      	},
+		"DNSServer_address": {
+			"value": "10.0.0.4",
+		},
+	//  Storage Accounts  //
+        "premiumsa_type": {
+            "value": "Premium_LRS"
+        },
+        "standardsa_type": {
+            "value": "Standard_LRS"
+        },
+		"premiumsa_name": {
+            "value": "mcspremiumsa"
+        },
+        "standardsa_name": {
+            "value": "mcsstandardsa"
+        },
+	// Virtual Networks  //
+		"VirtualNetwork_name": {
+			"value": "mscVNET",
+		},
+		"VirtualNetwork_prefix": {
+			"value": "10.0.0.0/16"
+		}
+		"VirtualNetwork_id": {
+			"value": "???"
+		}
+	//  Subnets  //
+		"Subnet1_name" : {
+			"value": "mscSubnet1"
+		},
+		"Subnet1_prefix": {
+			"value": "10.0.0.0/24"
+		},
+	//  Virtual Machines  //
+		"vmDC01_name": {
+			"value": "srv-DC01",
+		},
+		"vmDOM01_name": {
+			"value": "srv-DOM01",
+		},
+		"vmEXC01_name": {
+			"value": "srv-EXC01",
+		},
+		"vmMNE01_name": {
+			"value": "srv-MNE01",
+		},
+		"vmCMN01_name": {
+			"value": "srv-CMN01",
+		},
+	//  Network Interfaces  //
+		"nicDC01_name": {
+			"value": "nicDC01",
+		},
+		"nicDOM01_name": {
+			"value": "nicDOM01",
+		},
+		"nicEXC01_name": {
+			"value": "nicEXC01",
+		},
+		"nicMNE01_name": {
+			"value": "nicMNE01",
+		},
+		"nicCMN01_name": {
+			"value": "nicCMN01",
+		},
+		"nicDC01_id": {
+			"value": "???",
+		},
+		"nicDOM01_id": {
+			"value": "???",
+		},
+		"nicDOM01_id_1": {
+			"value": "???",
+		},
+		"nicEXC01_id": {
+			"value": "???",
+		},
+		"nicMNE01_id": {
+			"value": "???",
+		},
+		"nicCMN01_id": {
+			"value": "???",
+		},
+	//  Network Security Groups  //
+		"nsgLab_name": {
+			"value": "nsgLab",
+		},
+		"nsgLab_id": {
+			"value": "???"
+		},
+	//	Public IP Addresses  //
+		"pubIPDC01_name": {
+			"value": "pipDC01",
+		},
+		"pubIPDOM01_name": {
+			"value": "pipDOM01",
+		},
+		"pubIPEXC01_name": {
+			"value": "pipEXC01",
+		},
+		"pubIPMNE01_name": {
+			"value": "pipMNE01",
+		},
+		"pubIPCMN01_name": {
+			"value": "pipCMN01",
+		},
+		
+		
+		
+		
+		
+		
+    }
+}

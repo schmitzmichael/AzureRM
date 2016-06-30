@@ -22,11 +22,11 @@ Login-AzureRmAccount
 
 # Adjust the 'yournamehere' part of these three strings to
 # something unique for you. Leave the last two characters in each.
-$URI       = 'https://raw.githubusercontent.com/GoateePFE/AzureRM/master/active-directory-new-domain-with-data/azuredeploy.json'
-$Location  = 'east us'
-$rgname    = 'yournamehererg'
-$saname    = 'yournameheresa'     # Lowercase required
-$addnsName = 'yournameheread'     # Lowercase required
+$URI       = 'https://raw.githubusercontent.com/schmitzmichael/AzureRM/master/active-directory-new-domain-with-data/azuredeploy.json'
+$Location  = 'West Europe'
+$rgname    = 'mschmitzrg'
+$saname    = 'mschmitzsa'     # Lowercase required
+$addnsName = 'mschmitzad'     # Lowercase required
 
 # Check that the public dns $addnsName is available
 if (Test-AzureRmDnsAvailability -DomainNameLabel $addnsName -Location $Location)
@@ -38,8 +38,8 @@ New-AzureRmResourceGroup -Name $rgname -Location $Location
 # Parameters for the template and configuration
 $MyParams = @{
     newStorageAccountName = $saname
-    location              = 'East US'
-    domainName            = 'alpineskihouse.com'
+    location              = 'West Europe'
+    domainName            = 'source.lab'
     addnsName             = $addnsName
    }
 
@@ -48,7 +48,7 @@ $SplatParams = @{
     TemplateUri             = $URI 
     ResourceGroupName       = $rgname 
     TemplateParameterObject = $MyParams
-    Name                    = 'AlpineSkiHouseForest'
+    Name                    = 'SourceLab'
    }
 
 # This takes ~30 minutes
@@ -74,5 +74,12 @@ Start-Process -FilePath mstsc.exe -ArgumentList "/v:$IP"
 #  Users and populated groups within the OU structures
 #  Users root container has test users and populated test groups
 
+# Shutdown the VM(s) for the night
+Get-AzureRMVM -ResourceGroupName $rgname | Stop-AzureRMVM
+
 # Delete the entire resource group when finished
 Remove-AzureRmResourceGroup -Name $rgname -Force -Verbose
+
+
+# Quelle
+# 
