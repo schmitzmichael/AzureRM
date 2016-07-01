@@ -12,7 +12,7 @@ New-AzureRmResourceGroup -Name $rgname -Location $location -Verbose
 New-AzureRmResourceGroupDeployment -ResourceGroupName $rgname -TemplateParameterFile E:\Lab\mscAzureDeployment.param.json -TemplateFile E:\Lab\mscAzureDeployment.json -Verbose
 
 # Variante GitHub
-New-AzureRmResourceGroupDeployment -ResourceGroupName $rgname -TemplateParameterUri 'https://github.com/schmitzmichael/AzureRM/tree/master/mscLab/mscAzureDeployment.param.json' -TemplateUri 'https://github.com/schmitzmichael/AzureRM/tree/master/mscLab/mscAzureDeploymen.json' -Verbose
+New-AzureRmResourceGroupDeployment -ResourceGroupName $rgname -TemplateParameterUri 'https://raw.githubusercontent.com/schmitzmichael/AzureRM/master/mscLab/mscAzureDeployment.param.json'-TemplateUri 'https://raw.githubusercontent.com/schmitzmichael/AzureRM/master/mscLab/mscAzureDeployment.json' -Verbose
 
 
 # Find the VM IP and FQDN
