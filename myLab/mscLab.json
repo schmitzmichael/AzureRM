@@ -128,7 +128,7 @@
 	},
 	"variables": {
 		"API-Version": "2015-06-15",
-		"ResourcesLocation": "[ResourceGroup().location]"
+		"ResourcesLocation": "West Europe"
 		"adModulesURL": "[concat(parameters('assetLocation'),'CreateADDomainWithData.ps1.zip')]",
 	},
 	"resources": [
