@@ -2,7 +2,7 @@
 	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-	//  Basics / DSC / 
+	//  Basics 
 		"AdminUsername": {
 			"type": "string",
 			"metadata": {"description": "The username for the Administrator account of the new VM and Domain"}
