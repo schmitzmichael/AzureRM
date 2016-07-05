@@ -9,6 +9,15 @@
 		"AdminPassword": {
 			"value": "GEN-PASSWORD"
 		},
+		"domainName": {
+			"value": "source.lab"
+		},
+		"addnsName": {
+			"value": "mscAD"
+		},
+		"assetLocation": {
+			"value": "https://raw.githubusercontent.com/schmitzmichael/AzureRM/master/myLab/"
+		}
 	//  Storage Settings
 		"PremiumSa_name": {
             "value": "mcspremiumsa"
