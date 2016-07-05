@@ -2,6 +2,7 @@
 	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+	// Basics
 		"AdminUsername": {
 			"type": "string",
 			"metadata": {"description": "The username for the Administrator account of the new VM and Domain"}
@@ -13,9 +14,6 @@
 		"domainName": {
 			"type": "string",
 			"metadata": {"description": "The FQDN of the AD Domain created "}
-		},
-		"assetLocation": {
-			"type": "string"
 		},
 	//  Storage Settings
 		"PremiumSa_name": {
@@ -127,8 +125,7 @@
 	},
 	"variables": {
 		"API-Version": "2015-06-15",
-		"ResourcesLocation": "West Europe"
-		"adModulesURL": "[concat(parameters('assetLocation'),'CreateADDomainWithData.ps1.zip')]",
+		"ResourcesLocation": "[ResourceGroup().location]"
 	},
 	"resources": [
 	//  Storage Settings
@@ -474,38 +471,6 @@
 				"[resourceId('Microsoft.Storage/storageAccounts', parameters('premiumsa_name'))]",
 				"[resourceId('Microsoft.Storage/storageAccounts', parameters('standardsa_name'))]",
 				"[resourceId('Microsoft.Network/networkInterfaces', parameters('nicDC01_name'))]"
-		]
-		"resources": [
-			{
-				"type": "Microsoft.Compute/virtualMachines/extensions",
-				"name": "[concat(parameters('vmDC01_name'),'/CreateADForest')]",
-				"apiVersion": "[variables('API-Version')]",
-				"location": "[variables('ResourcesLocation')]",
-				"dependsOn": ["[resourceId('Microsoft.Compute/virtualMachines', parameters('vmDC01_name'))]"],
-				"properties": {
-					"publisher": "Microsoft.Powershell",
-					"type": "DSC",
-					"typeHandlerVersion": "2.11",
-					"autoUpgradeMinorVersion": true,
-					"settings": {
-						"ModulesUrl": "[variables('adModulesURL')]",
-						"ConfigurationFunction": "[variables('adConfigurationFunction')]",
-						"Properties": {
-							"DomainName": "[parameters('domainName')]",
-							"AdminCreds": {
-								"UserName": "[parameters('adminUserName')]",
-								"Password": "PrivateSettingsRef:AdminPassword"
-							}
-						}
-					},
-					"protectedSettings": {
-						"Items": {
-							"AdminPassword": "[parameters('adminPassword')]"
-						},
-						"DataBlobUri": "[concat(parameters('assetLocation'),'CreateADDomainWithData.psd1')]"
-					}
-				}
-			}
 		]
 	},
 	////  Domino Server

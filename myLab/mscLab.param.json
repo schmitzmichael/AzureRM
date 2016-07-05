@@ -5,7 +5,6 @@
 		"AdminUsername": {"value": "adm-Alegri"},
 		"AdminPassword": {"value": "GEN-PASSWORD"},
 		"domainName": {"value": "source.lab"},
-		"assetLocation": {"value": "https://github.com/schmitzmichael/AzureRM/tree/master/myLab/"},
 		"PremiumSa_name": {"value": "mcspremiumsa"},
 		"PremiumSa_type": {"value": "Premium_LRS"},
         "StandardSa_name": {"value": "mcsstandardsa"},
