@@ -15,13 +15,8 @@
 			"type": "string",
 			"metadata": {"description": "The FQDN of the AD Domain created "}
 		},
-		"addnsName": {
-			"type": "string",
-			"metadata": {"description": "The DNS prefix for the public IP address used by the Load Balancer"}
-		},
 		"assetLocation": {
-			"type": "string",
-			"metadata": {"description": "The location of resources such as templates and DSC modules that the script is dependent"}
+			"type": "string"
 		},
 	//  Storage Settings
 		"PremiumSa_name": {

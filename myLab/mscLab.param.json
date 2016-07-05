@@ -12,12 +12,9 @@
 		"domainName": {
 			"value": "source.lab"
 		},
-		"addnsName": {
-			"value": "mscAD"
-		},
 		"assetLocation": {
-			"value": "https://raw.githubusercontent.com/schmitzmichael/AzureRM/master/myLab/"
-		}
+			"value": "https://github.com/schmitzmichael/AzureRM/tree/master/myLab/"
+		},
 	//  Storage Settings
 		"PremiumSa_name": {
             "value": "mcspremiumsa"
