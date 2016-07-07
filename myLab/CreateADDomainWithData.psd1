@@ -21,7 +21,7 @@ Harriet,P@ssw0rd,Operations,Specialist
 adm-Migadmin,P@ssw0rd,_ServiceAccounts,ServiceAccount
 '@
 
-        RootOUs = '_Accounting','_IT','_Marketing','_Operations','_Migration','_ServiceAccounts''
+        RootOUs = '_Accounting','_IT','_Marketing','_Operations','_Migration','_ServiceAccounts'
         ChildOUs = 'Users','Computers','Groups'
         TestObjCount = 10
 
