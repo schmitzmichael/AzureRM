@@ -1,0 +1,41 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+	// Basics
+		"AdminUsername": {"value": "adm-Alegri"},
+		"domainName": {"value": "source.lab"},
+		"assetLocation": {"value": "https://raw.githubusercontent.com/schmitzmichael/AzureRM/master/myLab/"},
+	//  Storage Settings
+		"PremiumSa_name": {"value": "mscpremiumsa"},
+		"PremiumSa_type": {"value": "Premium_LRS"},
+        "StandardSa_name": {"value": "mcsstandardsa"},
+		"StandardSa_type": {"value": "Standard_LRS"},
+	//  Virtual Network Settings
+		"VirtualNetwork_name": {"value": "mscVNET"},
+		"VirtualNetwork_prefix": {"value": "10.0.0.0/16"},
+	//  Subnets
+		"Subnet1_name" : {"value": "mscSubnet1"},
+		"Subnet1_prefix": {"value": "10.0.0.0/24"},
+	//  Network Interfaces
+		"nicDC01_name": {"value": "nicDC01"},
+		"nicDOM01_name": {"value": "nicDOM01"},
+		"nicEXC01_name": {"value": "nicEXC01"},
+		"nicMNE01_name": {"value": "nicMNE01"},
+		"nicCMN01_name": {"value": "nicCMN01"},
+	//  Network Security Group
+		"nsgLab_name": {"value": "nsgLab"},
+	//	Public IP Addresses
+		"pubIPDC01_name": {"value": "pipDC01"},
+		"pubIPDOM01_name": {"value": "pipDOM01"},
+		"pubIPEXC01_name": {"value": "pipEXC01"},
+		"pubIPMNE01_name": {"value": "pipMNE01"},
+		"pubIPCMN01_name": {"value": "pipCMN01"},
+	//  Virtual Machines
+		"vmDC01_name": {"value": "srv-DC01"},
+		"vmDOM01_name": {"value": "srv-DOM01"},
+		"vmEXC01_name": {"value": "srv-EXC01"},
+		"vmMNE01_name": {"value": "srv-MNE01"},
+		"vmCMN01_name": {"value": "srv-CMN01"}
+	}
+}

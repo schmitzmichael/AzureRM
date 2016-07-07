@@ -1,28 +1,45 @@
 ﻿# Connect to Azure Subscription
-Login-AzureRmAccount
+Add-AzureRmAccount
 
 # Variables
 $rgname = 'msc-Lab'
 $location = 'West Europe'
 
+$URIConf   = 'https://raw.githubusercontent.com/schmitzmichael/AzureRM/master/myLab/mscLab.json'
+$URIParam  = 'https://raw.githubusercontent.com/schmitzmichael/AzureRM/master/myLab/mscLab.param.json'
+$PathConf  = 'E:\Lab\mscLab.json'
+$PathParam = 'E:\Lab\mscLab.param.json'
+$DeployName = 'Schmitz'
+
+
 # Deploy environment
 New-AzureRmResourceGroup -Name $rgname -Location $location -Verbose
 
+
+
+# Splat the parameters on New-AzureRmResourceGroupDeployment  
+$SplatParams = @{
+    TemplateUri             = $URIConf 
+    ResourceGroupName       = $rgname 
+    TemplateParameterURI    = $URIParam
+    Name                    = $DeployName
+}
+
+$SplatParams = @{
+    TemplateFile            = $PathConf 
+    ResourceGroupName       = $rgname 
+    TemplateParameterFile   = $PathParam
+    Name                    = $DeployName
+}
+
+New-AzureRmResourceGroupDeployment @SplatParams -Verbose
+
 # Variante local
-New-AzureRmResourceGroupDeployment -ResourceGroupName $rgname -TemplateParameterFile E:\Lab\mscLab.param.json -TemplateFile E:\Lab\mscLab.json -Verbose
+New-AzureRmResourceGroupDeployment -ResourceGroupName $rgname -TemplateParameterFile $PathParam -TemplateFile $PathConf -Name $DeployName -Verbose
 
 # Variante GitHub
-New-AzureRmResourceGroupDeployment -ResourceGroupName $rgname -TemplateParameterUri 'https://github.com/schmitzmichael/AzureRM/tree/master/myLab/mscLab.param.json'-TemplateUri 'https://github.com/schmitzmichael/AzureRM/tree/master/myLab/mscLab.json' -Verbose
+New-AzureRmResourceGroupDeployment -ResourceGroupName $rgname -TemplateParameterUri $URIParam -TemplateUri $URIConf -Verbose
 
-
-# Find the VM IP and FQDN
-$PublicAddress = (Get-AzureRmPublicIpAddress -ResourceGroupName $rgname)[0]
-$IP   = $PublicAddress.IpAddress
-$FQDN = $PublicAddress.DnsSettings.Fqdn
-
-# RDP either way
-Start-Process -FilePath mstsc.exe -ArgumentList "/v:$FQDN"
-Start-Process -FilePath mstsc.exe -ArgumentList "/v:$IP"
 
 
 # Shutdown the VM(s) for the night

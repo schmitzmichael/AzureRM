@@ -1,0 +1,686 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+	// Basics
+		"AdminUsername": {
+			"type": "string"
+		},
+		"AdminPassword": {
+			"type": "securestring",
+			"metadata": {
+				"description": "Bitte ein komplexes Kennwort vergeben"
+			}
+		},
+		"domainName": {
+			"type": "string"
+		},
+		"assetLocation": {
+			"type": "string"
+		},
+	//  Storage Settings
+		"PremiumSa_name": {
+			"type": "string",
+			"defaultValue": null
+		},
+		"PremiumSa_type": {
+			"type": "string",
+			"defaultValue": "Premium_LRS",
+			"allowedValues": ["Premium_LRS"]
+		},
+		"StandardSa_name": {
+			"type": "string",
+			"defaultValue": null
+		},
+		"StandardSa_type": {
+			"type": "string",
+			"defaultValue": "Standard_LRS",
+			"allowedValues": ["Standard_LRS","Standard_GRS"]
+		},
+	//  Virtual Network Settings
+		"VirtualNetwork_name": {
+			"defaultValue": "mscVNET",
+			"metadata": {"description": "Virtual Network Name"},
+			"type": "string"
+		},
+		"VirtualNetwork_prefix": {
+			"DefaultValue": "10.0.0.0/16",
+			"metadata": {"description": "Virtual Network Address Space"},
+			"type": "string"
+		},
+	//  Subnets
+		"Subnet1_name" : {
+			"type": "string",
+			"defaultValue": null
+		},
+		"Subnet1_prefix": {
+			"type": "string",
+			"defaultValue": null
+		},
+	//  Network Interfaces
+		"nicDC01_name": {
+			"defaultValue": null,
+			"type": "String"
+		},
+		"nicDOM01_name": {
+			"defaultValue": null,
+			"type": "String"
+		},
+		"nicEXC01_name": {
+			"defaultValue": null,
+			"type": "String"
+		},
+		"nicMNE01_name": {
+			"defaultValue": null,
+			"type": "String"
+		},
+		"nicCMN01_name": {
+			"defaultValue": null,
+			"type": "String"
+		},
+	//  Network Security Group
+		"nsgLab_name": {
+			"defaultValue": null,
+			"type": "String"
+		},
+	//	Public IP Addresses
+		"pubIPDC01_name": {
+			"defaultValue": null,
+			"type": "String"
+		},
+		"pubIPDOM01_name": {
+			"defaultValue": null,
+			"type": "String"
+		},
+		"pubIPEXC01_name": {
+			"defaultValue": null,
+			"type": "String"
+		},
+		"pubIPMNE01_name": {
+			"defaultValue": null,
+			"type": "String"
+		},
+		"pubIPCMN01_name": {
+			"defaultValue": null,
+		"type": "String"
+		},
+	//  Virtual Machines	
+		"vmDC01_name": {
+			"defaultValue": null,
+			"type": "String"
+		},
+		"vmDom01_name": {
+			"defaultValue": null,
+			"type": "String"
+		},
+		"vmEXC01_name": {
+			"defaultValue": null,
+			"type": "String"
+		},
+		"vmMNE01_name": {
+			"defaultValue": null,
+			"type": "String"
+		},
+		"vmCMN01_name": {
+			"defaultValue": null,
+			"type": "String"
+		}
+	},
+	"variables": {
+		"API-Version": "2015-06-15",
+		"ResourcesLocation": "West Europe",
+		"adModulesURL": "[concat(parameters('assetLocation'),'CreateADDomainWithData.ps1.zip')]",
+		"adConfigurationFunction": "CreateADDomainWithData.ps1\\CreateADDomainWithData"
+	},
+	"resources": [
+	//  Storage Settings
+	{
+		"type": "Microsoft.Storage/storageAccounts",
+		"name": "[parameters('PremiumSa_name')]",
+		"location": "[variables('ResourcesLocation')]",
+		"apiVersion": "[variables('API-Version')]",
+		"properties": {"accountType": "[parameters('PremiumSa_type')]"},
+		"dependsOn": []
+	},
+	{
+		"type": "Microsoft.Storage/storageAccounts",
+		"name": "[parameters('StandardSa_name')]",
+		"location": "[variables('ResourcesLocation')]",
+		"apiVersion": "[variables('API-Version')]",
+		"properties": {"accountType": "[parameters('StandardSa_type')]"},
+		"dependsOn": [],
+	},  
+	//  Virtual Network Settings
+		{
+		"type": "Microsoft.Network/virtualNetworks",
+		"name": "[parameters('VirtualNetwork_name')]",
+		"location": "[variables('ResourcesLocation')]",
+		"apiVersion": "[variables('API-Version')]",
+		"properties": {
+			"addressSpace": {"addressPrefixes": ["[parameters('VirtualNetwork_prefix')]"]},
+			"subnets": [
+				{
+					"name": "[parameters ('Subnet1_name')]",
+					"properties": {
+						"provisioningState": "Succeeded",
+						"addressPrefix": "[parameters ('Subnet1_prefix')]"},
+						"ipConfigurations": [
+							{"id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('nicDC01_name')), '/ipConfigurations/ipconfig1')]"},
+							{"id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('nicDOM01_name')), '/ipConfigurations/ipconfig1')]"},
+							{"id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('nicEXC01_name')), '/ipConfigurations/ipconfig1')]"},
+							{"id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('nicMNE01_name')), '/ipConfigurations/ipconfig1')]"},
+							{"id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('nicCMN01_name')), '/ipConfigurations/ipconfig1')]"}
+						]
+				}
+			]
+		},
+		"dependsOn": []
+	},
+	//  Network Interfaces
+		{
+		"type": "Microsoft.Network/networkInterfaces",
+		"name": "[parameters('nicDC01_name')]",
+		"location": "[variables('ResourcesLocation')]",
+		"apiVersion": "[variables('API-Version')]",
+		"properties": {
+			"ipConfigurations": [
+				{
+					"name": "ipconfig1",
+					"properties": {
+						"privateIPAddress": "10.0.0.4",
+						"privateIPAllocationMethod": "Static",
+						"publicIPAddress": {"id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('pubIPDC01_name'))]"},
+						"subnet": {"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetwork_name')), '/subnets/mscSubnet1')]"},
+						"primary": true,
+						"privateIPAddressVersion": "IPv4"
+					}
+				}
+			],
+			"dnsSettings": {
+                    "dnsServers": []
+            },
+			"enableIPForwarding": false,
+			"networkSecurityGroup": {"id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgLab_name'))]"}
+		},
+		"dependsOn": [
+			"[resourceId('Microsoft.Network/publicIPAddresses', parameters('pubIPDC01_name'))]",
+			"[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgLab_name'))]",
+			"[resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetwork_name'))]"
+            ]
+	},
+	{
+		"type": "Microsoft.Network/networkInterfaces",
+		"name": "[parameters('nicDOM01_name')]",
+		"location": "[variables('ResourcesLocation')]",
+		"apiVersion": "[variables('API-Version')]",
+		"properties": {
+			"ipConfigurations": [{
+				"name": "ipconfig1",
+				"properties": {
+					"privateIPAddress": "10.0.0.5",
+					"privateIPAllocationMethod": "Static",
+					"publicIPAddress": {"id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('pubIPDOM01_name'))]"},
+					"subnet": {"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetwork_name')), '/subnets/mscSubnet1')]"},
+					"primary": true,
+					"privateIPAddressVersion": "IPv4"
+				}
+			}],
+			"dnsSettings": {
+				"dnsServers": ["10.0.0.4"],
+				"appliedDnsServers": ["10.0.0.4"]
+			},
+			"enableIPForwarding": false,
+			"networkSecurityGroup": {"id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgLab_name'))]"}
+		},
+		"dependsOn": [
+			"[resourceId('Microsoft.Network/publicIPAddresses', parameters('pubIPDOM01_name'))]",
+			"[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgLab_name'))]",
+			"[resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetwork_name'))]"
+		]
+    },
+	{
+		"type": "Microsoft.Network/networkInterfaces",
+		"name": "[parameters('nicEXC01_name')]",
+		"location": "[variables('ResourcesLocation')]",
+		"apiVersion": "[variables('API-Version')]",
+		"properties": {
+			"ipConfigurations": [{
+				"name": "ipconfig1",
+				"properties": {
+					"privateIPAddress": "10.0.0.8",
+					"privateIPAllocationMethod": "Static",
+					"publicIPAddress": {"id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('pubIPEXC01_name'))]"},
+					"subnet": {"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetwork_name')), '/subnets/mscSubnet1')]"},
+					"primary": true,
+					"privateIPAddressVersion": "IPv4"
+				}
+			}],
+			"dnsSettings": {
+				"dnsServers": ["10.0.0.4"],
+				"appliedDnsServers": ["10.0.0.4"]
+			},
+            "enableIPForwarding": false,
+			"networkSecurityGroup": {"id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgLab_name'))]"}
+		},
+		"dependsOn": [
+			"[resourceId('Microsoft.Network/publicIPAddresses', parameters('pubIPEXC01_name'))]",
+			"[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgLab_name'))]",
+			"[resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetwork_name'))]"
+		]
+    },
+	{
+		"type": "Microsoft.Network/networkInterfaces",
+		"name": "[parameters('nicMNE01_name')]",
+		"location": "[variables('ResourcesLocation')]",
+		"apiVersion": "[variables('API-Version')]",
+		"properties": {
+			"ipConfigurations": [{
+				"name": "ipconfig1",
+                "properties": {
+					"privateIPAddress": "10.0.0.6",
+					"privateIPAllocationMethod": "Static",
+					"publicIPAddress": {"id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('pubIPMNE01_name'))]"},
+					"subnet": {"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetwork_Name')), '/subnets/mscSubnet1')]"},
+					"primary": true,
+					"privateIPAddressVersion": "IPv4"
+				}
+			}],
+			"dnsSettings": {
+				"dnsServers": ["10.0.0.4"],
+				"appliedDnsServers": ["10.0.0.4"]
+			},
+			"enableIPForwarding": false,
+			"networkSecurityGroup": {"id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgLab_name'))]"}
+		},
+		"dependsOn": [
+			"[resourceId('Microsoft.Network/publicIPAddresses', parameters('pubIPMNE01_name'))]",
+			"[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgLab_name'))]",
+			"[resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetwork_name'))]"
+		]
+    },
+	{
+		"type": "Microsoft.Network/networkInterfaces",
+		"name": "[parameters('nicCMN01_name')]",
+		"location": "[variables('ResourcesLocation')]",
+		"apiVersion": "[variables('API-Version')]",
+		"properties": {
+			"ipConfigurations": [{
+				"name": "ipconfig1",
+				"properties": {
+					"privateIPAddress": "10.0.0.7",
+					"privateIPAllocationMethod": "Static",
+					"publicIPAddress": {"id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('pubIPCMN01_name'))]"},
+					"subnet": {"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetwork_Name')), '/subnets/mscSubnet1')]"},
+					"primary": true,
+					"privateIPAddressVersion": "IPv4"
+				}
+			}],
+			"dnsSettings": {
+				"dnsServers": ["10.0.0.4"],
+				"appliedDnsServers": ["10.0.0.4"]
+			},
+            "enableIPForwarding": false,
+			"networkSecurityGroup": {"id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgLab_name'))]"}
+		},
+		"dependsOn": [
+			"[resourceId('Microsoft.Network/publicIPAddresses', parameters('pubIPCMN01_name'))]",
+			"[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgLab_name'))]",
+			"[resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetwork_name'))]"
+		]
+    },
+	//  Network Security Group
+		{
+		"type": "Microsoft.Network/networkSecurityGroups",
+		"name": "[parameters('nsgLab_name')]",
+		"apiVersion": "[variables('API-Version')]",
+		"location": "[variables('ResourcesLocation')]",
+		"properties": {
+			"securityRules": [
+				{
+					"name": "default-allow-rdp",
+					"properties": {
+						"protocol": "*",
+						"sourcePortRange": "*",
+						"destinationPortRange": "3389",
+						"sourceAddressPrefix": "*",
+						"destinationAddressPrefix": "*",
+						"access": "Allow",
+						"priority": 1000,
+						"direction": "Inbound"
+					}
+				},
+				{
+					"name": "allow-notes-port",
+					"properties": {
+						"protocol": "Tcp",
+						"sourcePortRange": "*",
+						"destinationPortRange": "1352",
+						"sourceAddressPrefix": "*",
+						"destinationAddressPrefix": "*",
+						"access": "Allow",
+						"priority": 1010,
+						"direction": "Inbound"
+					}
+				},				
+			]
+		},
+		"dependsOn": []
+		},
+	//	Public IP Addresses
+		{
+			"type": "Microsoft.Network/publicIPAddresses",
+			"name": "[parameters('pubIPDC01_name')]",
+			"apiVersion": "[variables('API-Version')]",
+			"location": "[variables('ResourcesLocation')]",
+			"properties": {
+				"publicIPAllocationMethod": "Static",
+				"idleTimeoutInMinutes": 4
+			},
+			"dependsOn": []
+		},
+		{
+			"type": "Microsoft.Network/publicIPAddresses",
+			"name": "[parameters('pubIPDOM01_name')]",
+			"apiVersion": "[variables('API-Version')]",
+			"location": "[variables('ResourcesLocation')]",
+			"properties": {
+				"publicIPAllocationMethod": "Static",
+				"idleTimeoutInMinutes": 4
+			},
+			"dependsOn": []
+		},
+		{
+			"type": "Microsoft.Network/publicIPAddresses",
+			"name": "[parameters('pubIPEXC01_name')]",
+			"apiVersion": "[variables('API-Version')]",
+			"location": "[variables('ResourcesLocation')]",
+			"properties": {
+				"publicIPAllocationMethod": "Static",
+				"idleTimeoutInMinutes": 4
+			},
+			"dependsOn": []
+		},
+		{
+			"type": "Microsoft.Network/publicIPAddresses",
+			"name": "[parameters('pubIPMNE01_name')]",
+			"apiVersion": "[variables('API-Version')]",
+			"location": "[variables('ResourcesLocation')]",
+			"properties": {
+				"publicIPAllocationMethod": "Static",
+				"idleTimeoutInMinutes": 4
+			},
+			"dependsOn": []
+		},
+		{
+			"type": "Microsoft.Network/publicIPAddresses",
+			"name": "[parameters('pubIPCMN01_name')]",
+			"apiVersion": "[variables('API-Version')]",
+			"location": "[variables('ResourcesLocation')]",
+			"properties": {
+				"publicIPAllocationMethod": "Static",
+				"idleTimeoutInMinutes": 4
+			},
+			"dependsOn": []
+		},
+	//  Virtual Machines
+	////  Domain Controller
+	{
+		"type": "Microsoft.Compute/virtualMachines",
+		"name": "[parameters('vmDC01_name')]",
+		"apiVersion": "[variables('API-Version')]",
+		"location": "[variables('ResourcesLocation')]",
+		"tags": {},
+		"properties": {
+			"hardwareProfile": {"vmSize": "Standard_DS1_v2"},
+			"storageProfile": {
+				"imageReference": {
+					"publisher": "MicrosoftWindowsServer",
+					"offer": "WindowsServer",
+					"sku": "2012-R2-Datacenter",
+					"version": "latest"
+				},
+				"osDisk": {
+					"name": "[parameters('vmDC01_name')]",
+					"createOption": "FromImage",
+					"vhd": {"uri": "[concat('https://', parameters('premiumsa_name'), '.blob.core.windows.net/vhds/','mscDC01.vhd')]"},
+					"caching": "ReadWrite"
+				},
+				"dataDisks": [
+					{
+						"lun": 0,
+						"name": "[concat(parameters('vmDC01_name'),'-Data')]",
+						"createOption": "Empty",
+						"vhd": {"uri": "[concat('https://', parameters('standardsa_name'), '.blob.core.windows.net/vhds/', parameters('vmDC01_name'),'-Data.vhd')]"},
+						"caching": "None",
+						"diskSizeGB": 5
+					}
+				]
+			},
+			"osProfile": {
+				"computerName": "[parameters('vmDC01_name')]",
+				"adminUsername": "[parameters('adminUsername')]",
+				"adminPassword": "[parameters('AdminPassword')]",
+				"windowsConfiguration": {
+					"provisionVMAgent": true,
+					"enableAutomaticUpdates": true
+				},
+				"secrets": []
+			},
+			"networkProfile": {
+				"networkInterfaces": [
+					{"id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicDC01_name'))]"}
+				]
+			}
+		},
+		"dependsOn": [
+				"[resourceId('Microsoft.Storage/storageAccounts', parameters('premiumsa_name'))]",
+				"[resourceId('Microsoft.Storage/storageAccounts', parameters('standardsa_name'))]",
+				"[resourceId('Microsoft.Network/networkInterfaces', parameters('nicDC01_name'))]"
+		],
+		"resources": [
+			{
+				"type": "Microsoft.Compute/virtualMachines/extensions",
+				"name": "[concat(parameters('vmDC01_name'),'/CreateADForest')]",
+				"apiVersion": "[variables('API-Version')]",
+				"location": "[variables('ResourcesLocation')]",
+				"dependsOn": ["[resourceId('Microsoft.Compute/virtualMachines', parameters('vmDC01_name'))]"],
+				"properties": {
+					"publisher": "Microsoft.Powershell",
+					"type": "DSC",
+					"typeHandlerVersion": "2.11",
+					"autoUpgradeMinorVersion": true,
+					"settings": {
+						"ModulesUrl": "[variables('adModulesURL')]",
+						"ConfigurationFunction": "[variables('adConfigurationFunction')]",
+						"Properties": {
+							"DomainName": "[parameters('domainName')]",
+							"AdminCreds": {
+								"UserName": "[parameters('adminUsername')]",
+								"Password": "PrivateSettingsRef:AdminPassword"
+							}
+						}
+					},
+					"protectedSettings": {
+						"Items": {
+							"AdminPassword": "[parameters('adminPassword')]"
+						},
+						"DataBlobUri": "[concat(parameters('assetLocation'),'CreateADDomainWithData.psd1')]"
+					}
+				}
+			}
+		]
+	},
+	////  Domino Server
+	{
+		"type": "Microsoft.Compute/virtualMachines",
+		"name": "[parameters('vmDom01_name')]",
+		"apiVersion": "[variables('API-Version')]",
+		"location": "[variables('ResourcesLocation')]",
+		"properties": {
+			"hardwareProfile": {"vmSize": "Standard_DS1_v2"},
+			"storageProfile": {
+				"imageReference": {
+					"publisher": "MicrosoftWindowsServer",
+					"offer": "WindowsServer",
+					"sku": "2012-R2-Datacenter",
+					"version": "latest"
+				},
+				"osDisk": {
+					"name": "[parameters('vmDom01_name')]",
+					"createOption": "FromImage",
+					"vhd": {"uri": "[concat('https', '://', parameters('premiumsa_name'), '.blob.core.windows.net', concat('/vhds/', parameters('vmDom01_name'),'mscDom.vhd'))]"},
+					"caching": "ReadWrite"
+				},
+				"dataDisks": []
+			},
+			"osProfile": {
+				"computerName": "[parameters('vmDom01_name')]",
+				"adminUsername": "[parameters('adminUsername')]",
+				"adminPassword": "[parameters('AdminPassword')]",
+				"windowsConfiguration": {
+					"provisionVMAgent": true,
+					"enableAutomaticUpdates": true
+				},
+				"secrets": []
+			},
+       "networkProfile": {
+         "networkInterfaces": [
+           {"id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicDOM01_name'))]"}
+         ]
+       }
+     },
+	 "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('premiumsa_name'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicDOM01_name'))]"
+      ]
+    },
+	////  Exchange Server
+	{
+		"type": "Microsoft.Compute/virtualMachines",
+		"name": "[parameters('vmEXC01_name')]",
+		"apiVersion": "[variables('API-Version')]",
+		"location": "[variables('ResourcesLocation')]",
+		"properties": {
+			"hardwareProfile": {"vmSize": "Standard_DS11_v2"},
+			"storageProfile": {
+				"imageReference": {
+					"publisher": "MicrosoftWindowsServer",
+					"offer": "WindowsServer",
+					"sku": "2012-R2-Datacenter",
+					"version": "latest"
+				},
+				"osDisk": {
+					"name": "[parameters('vmEXC01_name')]",
+					"createOption": "FromImage",
+					"vhd": {"uri": "[concat('https', '://', parameters('premiumsa_name'), '.blob.core.windows.net', concat('/vhds/', parameters('vmEXC01_name'),'mscEXC01.vhd'))]"},
+					"caching": "ReadWrite"
+				},
+				"dataDisks": []
+			},
+			"osProfile": {
+				"computerName": "[parameters('vmEXC01_name')]",
+				"adminUsername": "[parameters('adminUsername')]",
+				"adminPassword": "[parameters('AdminPassword')]",
+				"windowsConfiguration": {
+					"provisionVMAgent": true,
+					"enableAutomaticUpdates": true
+				},
+				"secrets": []
+			},
+			"networkProfile": {
+				"networkInterfaces": [
+					{"id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicEXC01_name'))]"}
+				]
+			}
+		},
+		"dependsOn": [
+			"[resourceId('Microsoft.Storage/storageAccounts', parameters('premiumsa_name'))]",
+			"[resourceId('Microsoft.Network/networkInterfaces', parameters('nicEXC01_name'))]"
+		]
+    },	
+	////  MNE Server
+	{
+		"type": "Microsoft.Compute/virtualMachines",
+		"name": "[parameters('vmMNE01_name')]",
+		"apiVersion": "[variables('API-Version')]",
+		"location": "[variables('ResourcesLocation')]",
+		"properties": {
+			"hardwareProfile": {"vmSize": "Standard_DS2_v2"},
+			"storageProfile": {
+				"imageReference": {
+					"publisher": "MicrosoftWindowsServer",
+					"offer": "WindowsServer",
+					"sku": "2012-R2-Datacenter",
+					"version": "latest"
+				},
+				"osDisk": {
+					"name": "[parameters('vmMNE01_name')]",
+					"createOption": "FromImage",
+					"vhd": {"uri": "[concat('https', '://', parameters('premiumsa_name'), '.blob.core.windows.net', concat('/vhds/', parameters('vmMNE01_name'),'mscMNE01.vhd'))]"},
+					"caching": "ReadWrite"
+				},
+				"dataDisks": []
+			},
+			"osProfile": {
+				"computerName": "[parameters('vmMNE01_name')]",
+				"adminUsername": "[parameters('adminUsername')]",
+				"adminPassword": "[parameters('AdminPassword')]",
+				"windowsConfiguration": {
+					"provisionVMAgent": true,
+					"enableAutomaticUpdates": true
+				},
+				"secrets": []
+			},
+			"networkProfile": {
+				"networkInterfaces": [{"id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicMNE01_name'))]"}]
+			}
+		},
+		"dependsOn": [
+			"[resourceId('Microsoft.Storage/storageAccounts', parameters('premiumsa_name'))]",
+			"[resourceId('Microsoft.Network/networkInterfaces', parameters('nicMNE01_name'))]"
+		]
+    },	
+	////  CMN Server
+	{
+		"type": "Microsoft.Compute/virtualMachines",
+		"name": "[parameters('vmCMN01_name')]",
+		"apiVersion": "[variables('API-Version')]",
+		"location": "[variables('ResourcesLocation')]",
+		"properties": {
+			"hardwareProfile": {"vmSize": "Standard_DS2_v2"},
+			"storageProfile": {
+				"imageReference": {
+					"publisher": "MicrosoftWindowsServer",
+					"offer": "WindowsServer",
+					"sku": "2012-R2-Datacenter",
+					"version": "latest"
+				},
+				"osDisk": {
+					"name": "[parameters('vmCMN01_name')]",
+					"createOption": "FromImage",
+					"vhd": {"uri": "[concat('https', '://', parameters('premiumsa_name'), '.blob.core.windows.net', concat('/vhds/', parameters('vmCMN01_name'),'mscCMN01.vhd'))]"},
+					"caching": "ReadWrite"
+				},
+				"dataDisks": []
+			},
+			"osProfile": {
+				"computerName": "[parameters('vmCMN01_name')]",
+				"adminUsername": "[parameters('adminUsername')]",
+				"adminPassword": "[parameters('AdminPassword')]",
+				"windowsConfiguration": {
+					"provisionVMAgent": true,
+					"enableAutomaticUpdates": true
+				},
+				"secrets": []
+			},
+			"networkProfile": {
+				"networkInterfaces": [{"id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicCMN01_name'))]"}]
+			}
+		},
+		"dependsOn": [
+			"[resourceId('Microsoft.Storage/storageAccounts', parameters('premiumsa_name'))]",
+			"[resourceId('Microsoft.Network/networkInterfaces', parameters('nicCMN01_name'))]"
+		]
+    },
+	]
+}
