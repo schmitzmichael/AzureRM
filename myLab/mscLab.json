@@ -1,5 +1,5 @@
 {
-	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
 	// Basics
@@ -356,12 +356,25 @@
 						"sourcePortRange": "*",
 						"destinationPortRange": "1352",
 						"sourceAddressPrefix": "*",
-						"destinationAddressPrefix": "*",
+						"destinationAddressPrefix": "10.0.0.5",
 						"access": "Allow",
 						"priority": 1010,
 						"direction": "Inbound"
 					}
-				},				
+				},	
+				{
+					"name": "allow-HTTPS-port",
+					"properties": {
+						"protocol": "Tcp",
+						"sourcePortRange": "*",
+						"destinationPortRange": "443",
+						"sourceAddressPrefix": "*",
+						"destinationAddressPrefix": "10.0.0.8",
+						"access": "Allow",
+						"priority": 1020,
+						"direction": "Inbound"
+					}
+				},					
 			]
 		},
 		"dependsOn": []
