@@ -18,10 +18,10 @@ Eddie,P@ssw0rd,Accounting,Specialist
 Frieda,P@ssw0rd,IT,Specialist
 George,P@ssw0rd,Marketing,Specialist
 Harriet,P@ssw0rd,Operations,Specialist
-adm-Migadmin,P@ssw0rd,_ServiceAccounts,ServiceAccount
+adm-Migadmin,P@ssw0rd,ServiceAccounts,ServiceAccount
 '@
 
-        RootOUs = '_Accounting','_IT','_Marketing','_Operations','_Migration','_ServiceAccounts'
+        RootOUs = 'Accounting','IT','Marketing','Operations','Migration','ServiceAccounts'
         ChildOUs = 'Users','Computers','Groups'
         TestObjCount = 10
 
